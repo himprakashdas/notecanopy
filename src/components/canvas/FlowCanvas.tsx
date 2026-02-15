@@ -114,6 +114,26 @@ const FlowCanvasInternal = () => {
     }
   };
 
+  const handleNewConversation = () => {
+    const newNodeId = nanoid();
+    const newNode: NoteTreeNode = {
+      id: newNodeId,
+      type: 'chatNode',
+      position: { x: 0, y: 0 },
+      data: {
+        label: '',
+        content: '',
+        type: 'user',
+        createdAt: Date.now(),
+      },
+      style: { width: 250, height: 120 },
+    };
+    addNode(newNode);
+    setTimeout(() => {
+      setCenter(0, 0, { duration: 800, zoom: 1 });
+    }, 100);
+  };
+
   const startChat = useCallback(() => {
     const newNodeId = nanoid();
     const newNode: NoteTreeNode = {
@@ -178,6 +198,16 @@ const FlowCanvasInternal = () => {
             className="p-2.5 bg-zinc-900/50 backdrop-blur-md border border-zinc-800 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-xl transition-all shadow-xl group"
           >
             <LayoutDashboard className="w-5 h-5" />
+          </button>
+        </Tooltip>
+
+        <Tooltip content="Start a new conversation" position="bottom">
+          <button
+            onClick={handleNewConversation}
+            className="flex items-center gap-2 px-3 py-2 bg-primary/10 backdrop-blur-md border border-primary/30 hover:bg-primary/20 text-primary rounded-xl transition-all shadow-xl group"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="text-sm font-medium">New Conversation</span>
           </button>
         </Tooltip>
 

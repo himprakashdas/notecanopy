@@ -112,7 +112,7 @@ export function ProjectGallery() {
         <header className="mb-12">
           <h2 className="text-3xl font-bold text-zinc-100 mb-2">Welcome to {APP_NAME}</h2>
           <p className="text-zinc-500">
-            Pick a project from the sidebar to continue your learning journey.
+            Pick a project to continue your learning journey.
           </p>
         </header>
 

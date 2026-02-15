@@ -7,7 +7,7 @@ import { clsx } from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
 import { Tooltip } from '../ui/Tooltip';
 import { ProjectDeleteModal } from './ProjectDeleteModal';
-import { APP_NAME } from '../../config';
+import { APP_NAME, APP_TAGLINE } from '../../config';
 import { importProjectFromJSON } from '../../utils/import';
 
 export function Sidebar() {
@@ -252,7 +252,7 @@ export function Sidebar() {
           <div className="flex-1 min-w-0">
             <div className="text-xs font-bold text-zinc-200">Local Space</div>
             <div className="text-[10px] text-zinc-500 font-medium uppercase tracking-tighter">
-              Research Data Store
+              {APP_TAGLINE}
             </div>
           </div>
         </div>
