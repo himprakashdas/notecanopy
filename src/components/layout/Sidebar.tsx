@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { useFlowStore } from '../../store/useFlowStore';
 import { Project } from '../../types';
-import { Plus, Search, Folder, Trash2, Upload } from 'lucide-react';
+import { Plus, Search, Folder, Trash2, Upload, ChevronLeft, ChevronRight } from 'lucide-react';
 import { clsx } from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
 import { Tooltip } from '../ui/Tooltip';
@@ -28,6 +28,7 @@ export function Sidebar() {
   const [projectToDelete, setProjectToDelete] = useState<{ id: string; name: string } | null>(null);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [editingProjectName, setEditingProjectName] = useState('');
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -109,59 +110,125 @@ export function Sidebar() {
   };
 
   return (
-    <div className="w-72 h-screen bg-zinc-950 border-r border-zinc-900 flex flex-col z-50 overflow-hidden select-none">
+    <div className={clsx(
+      "h-screen bg-zinc-950 border-r border-zinc-900 flex flex-col z-50 overflow-hidden select-none transition-all duration-300",
+      isCollapsed ? "w-20" : "w-72"
+    )}>
       {/* Header */}
-      <div className="p-6 border-b border-zinc-900">
-        <div className="flex items-center gap-3 mb-6">
+      <div className={clsx(
+        "border-b border-zinc-900 relative",
+        isCollapsed ? "p-3" : "p-6"
+      )}>
+        {/* Toggle Button - only show when expanded */}
+        {!isCollapsed && (
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="absolute top-3 right-3 p-1.5 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 rounded-lg transition-all z-10"
+            title="Collapse sidebar"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        )}
+
+        <div className={clsx(
+          "flex items-center gap-3",
+          isCollapsed ? "mb-3 flex-col" : "mb-6"
+        )}>
+          {isCollapsed && (
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="w-full flex items-center justify-center p-1.5 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 rounded-lg transition-all mb-2"
+              title="Expand sidebar"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
           <img
             src="/logo.png"
             alt={APP_NAME}
             className="w-8 h-8 rounded-lg shadow-lg shadow-primary/40"
           />
-          <h1 className="font-bold text-xl tracking-tight text-zinc-100">{APP_NAME}</h1>
+          {!isCollapsed && (
+            <h1 className="font-bold text-xl tracking-tight text-zinc-100">{APP_NAME}</h1>
+          )}
         </div>
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsCreating(true)}
-            className="flex-1 flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl transition-all group"
-          >
-            <Plus className="w-4 h-4 group-hover:text-primary transition-colors" />
-            <span className="text-sm font-medium">New</span>
-          </button>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="px-3 flex items-center justify-center bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-900 hover:border-zinc-800 text-zinc-500 hover:text-zinc-300 rounded-xl transition-all group"
-            title="Import Project"
-          >
-            <Upload className="w-4 h-4" />
-          </button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImport}
-            accept=".json"
-            className="hidden"
-          />
-        </div>
+        {!isCollapsed && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => setIsCreating(true)}
+              className="flex-1 flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl transition-all group"
+            >
+              <Plus className="w-4 h-4 group-hover:text-primary transition-colors" />
+              <span className="text-sm font-medium">New</span>
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="px-3 flex items-center justify-center bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-900 hover:border-zinc-800 text-zinc-500 hover:text-zinc-300 rounded-xl transition-all group"
+              title="Import Project"
+            >
+              <Upload className="w-4 h-4" />
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImport}
+              accept=".json"
+              className="hidden"
+            />
+          </div>
+        )}
+        {isCollapsed && (
+          <div className="flex flex-col gap-2 items-center">
+            <Tooltip content="New Project" position="right">
+              <button
+                onClick={() => {
+                  setIsCollapsed(false);
+                  setIsCreating(true);
+                }}
+                className="w-10 h-10 flex items-center justify-center bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 rounded-xl transition-all group"
+              >
+                <Plus className="w-4 h-4 group-hover:text-primary transition-colors" />
+              </button>
+            </Tooltip>
+            <Tooltip content="Import Project" position="right">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-10 h-10 flex items-center justify-center bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-900 hover:border-zinc-800 text-zinc-500 hover:text-zinc-300 rounded-xl transition-all group"
+              >
+                <Upload className="w-4 h-4" />
+              </button>
+            </Tooltip>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImport}
+              accept=".json"
+              className="hidden"
+            />
+          </div>
+        )}
       </div>
 
       {/* Search */}
-      <div className="px-4 py-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-          <input
-            type="text"
-            placeholder="Search projects..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-zinc-900/50 border border-zinc-900 focus:border-zinc-800 focus:outline-none rounded-lg pl-9 py-2 text-xs text-zinc-300 placeholder:text-zinc-600 transition-colors"
-          />
+      {!isCollapsed && (
+        <div className="px-4 py-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+            <input
+              type="text"
+              placeholder="Search projects..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-zinc-900/50 border border-zinc-900 focus:border-zinc-800 focus:outline-none rounded-lg pl-9 py-2 text-xs text-zinc-300 placeholder:text-zinc-600 transition-colors"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Project List */}
-      <div className="flex-1 overflow-y-auto px-3 custom-scrollbar">
+      {!isCollapsed && (
+        <div className="flex-1 overflow-y-auto px-3 custom-scrollbar">
         <div className="space-y-1">
           {isCreating && (
             <form onSubmit={handleCreate} className="px-1 py-2 lg:px-2">
@@ -242,19 +309,31 @@ export function Sidebar() {
           )}
         </div>
       </div>
+      )}
+
+      {/* Spacer when collapsed to push footer to bottom */}
+      {isCollapsed && <div className="flex-1" />}
 
       {/* Footer */}
-      <div className="p-4 bg-zinc-950/50 border-t border-zinc-900">
-        <div className="flex items-center gap-3 px-2">
+      <div className={clsx(
+        "bg-zinc-950/50 border-t border-zinc-900",
+        isCollapsed ? "p-3" : "p-4"
+      )}>
+        <div className={clsx(
+          "flex items-center gap-3",
+          isCollapsed ? "" : "px-2"
+        )}>
           <div className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center overflow-hidden">
             <div className="w-full h-full bg-gradient-to-br from-rose-500 to-amber-500 opacity-20" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold text-zinc-200">Local Space</div>
-            <div className="text-[10px] text-zinc-500 font-medium uppercase tracking-tighter">
-              {APP_TAGLINE}
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-bold text-zinc-200">Local Space</div>
+              <div className="text-[10px] text-zinc-500 font-medium uppercase tracking-tighter">
+                {APP_TAGLINE}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

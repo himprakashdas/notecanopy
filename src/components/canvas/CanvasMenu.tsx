@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Menu, X, Upload, Settings, Save } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAppStore } from '../../store/useAppStore';
@@ -32,8 +32,52 @@ export const CanvasMenu: React.FC = () => {
   const [apiKey, setApiKey] = useState(geminiApiKey || '');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  // Close menu and settings when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+        setShowSettings(false);
+      }
+    };
+
+    if (isOpen || showSettings) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, showSettings]);
+
+  // Close menu and settings when pressing Escape
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        setShowSettings(false);
+      }
+    };
+
+    if (isOpen || showSettings) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, showSettings]);
+
+  // Close settings when menu is closed
+  useEffect(() => {
+    if (!isOpen) {
+      setShowSettings(false);
+    }
+  }, [isOpen]);
 
   const handleExport = async (format: 'markdown' | 'json') => {
     if (!activeProject) return;
@@ -97,7 +141,7 @@ export const CanvasMenu: React.FC = () => {
   };
 
   return (
-    <div className="absolute top-6 right-6 z-50 flex flex-col items-end gap-2">
+    <div ref={menuRef} className="absolute top-6 right-6 z-50 flex flex-col items-end gap-2">
       <button
         onClick={toggleMenu}
         className={clsx(

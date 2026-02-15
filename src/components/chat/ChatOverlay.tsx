@@ -20,6 +20,11 @@ const ChatOverlay = () => {
 
   const [showMarkdown, setShowMarkdown] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [showKeyboardTip, setShowKeyboardTip] = useState(() => {
+    // Check if user has used the keyboard shortcut before
+    const hasUsedShortcut = localStorage.getItem('hasUsedCmdEnter');
+    return !hasUsedShortcut;
+  });
 
   useEffect(() => {
     if (editingNodeId && textareaRef.current) {
@@ -34,6 +39,12 @@ const ChatOverlay = () => {
     // Only "send" and close if it's a user node with content
     if (isUser) {
       if (hasContent) {
+        // Hide the keyboard tip and mark as used
+        if (showKeyboardTip) {
+          setShowKeyboardTip(false);
+          localStorage.setItem('hasUsedCmdEnter', 'true');
+        }
+        
         const newNode = await addAIChild(editingNodeId);
         if (newNode) {
           setCenter(newNode.position.x + 125, newNode.position.y + 100, {
@@ -48,7 +59,7 @@ const ChatOverlay = () => {
       // AI node - always allow closing
       setEditingNodeId(null);
     }
-  }, [editingNodeId, editingNode, hasContent, isUser, addAIChild, setCenter, setEditingNodeId]);
+  }, [editingNodeId, editingNode, hasContent, isUser, addAIChild, setCenter, setEditingNodeId, showKeyboardTip]);
 
   const handleCopy = React.useCallback(async () => {
     if (!editingNode?.data.label) return;
@@ -215,8 +226,16 @@ const ChatOverlay = () => {
 
         {/* Footer */}
         <div className="px-6 py-3 border-t border-zinc-800 bg-zinc-900/50 text-zinc-500 text-xs flex justify-between items-center">
-          <div>
-            Esc to close • {isUser ? '⌘Enter to send' : '⌘Enter to close'} • Changes auto-save
+          <div className="flex items-center gap-4">
+            {isUser && showKeyboardTip && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-lg text-primary text-xs font-medium animate-pulse">
+                <kbd className="px-1.5 py-0.5 bg-primary/20 rounded text-[10px] font-bold">⌘Enter</kbd>
+                <span>to go</span>
+              </div>
+            )}
+            <div>
+              Esc to close • {isUser ? '⌘Enter to send' : '⌘Enter to close'} • Changes auto-save
+            </div>
           </div>
           <div className="flex items-center gap-3">
             {isUser && (

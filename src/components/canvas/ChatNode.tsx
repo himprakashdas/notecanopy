@@ -26,6 +26,10 @@ const ChatNode = ({ id, data, selected }: NodeProps<NoteTreeNode>) => {
   const { setCenter } = useReactFlow();
   const [localEditMode, setLocalEditMode] = useState(isUser && data.label === '' && !data.thinking);
   const [showStopConfirm, setShowStopConfirm] = useState(false);
+  const [showKeyboardTip, setShowKeyboardTip] = useState(() => {
+    const hasUsedShortcut = localStorage.getItem('hasUsedCmdEnterInline');
+    return !hasUsedShortcut;
+  });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-enter edit mode if it's a new user node (empty label)
@@ -206,6 +210,11 @@ const ChatNode = ({ id, data, selected }: NodeProps<NoteTreeNode>) => {
                   setLocalEditMode(false);
                 }
                 if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                  // Hide the keyboard tip and mark as used
+                  if (showKeyboardTip) {
+                    setShowKeyboardTip(false);
+                    localStorage.setItem('hasUsedCmdEnterInline', 'true');
+                  }
                   setLocalEditMode(false);
                   handleAddAIChild(e as unknown as React.MouseEvent);
                 }
@@ -226,6 +235,14 @@ const ChatNode = ({ id, data, selected }: NodeProps<NoteTreeNode>) => {
             </ReactMarkdown>
           )}
         </div>
+
+        {/* Keyboard Shortcut Tip - shown at bottom left when editing */}
+        {isUser && localEditMode && showKeyboardTip && (
+          <div className="absolute bottom-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-primary/10 border border-primary/20 rounded text-primary text-[10px] font-medium animate-pulse pointer-events-none z-20">
+            <kbd className="px-1 py-0.5 bg-primary/20 rounded text-[9px] font-bold">⌘Enter</kbd>
+            <span>to go</span>
+          </div>
+        )}
 
         <Handle
           type="source"

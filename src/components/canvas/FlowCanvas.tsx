@@ -201,16 +201,6 @@ const FlowCanvasInternal = () => {
           </button>
         </Tooltip>
 
-        <Tooltip content="Start a new conversation" position="bottom">
-          <button
-            onClick={handleNewConversation}
-            className="flex items-center gap-2 px-3 py-2 bg-primary/10 backdrop-blur-md border border-primary/30 hover:bg-primary/20 text-primary rounded-xl transition-all shadow-xl group"
-          >
-            <Plus className="w-4 h-4" />
-            <span className="text-sm font-medium">New Conversation</span>
-          </button>
-        </Tooltip>
-
         <div className="flex items-center gap-3">
           <div className="w-1.5 h-6 bg-primary rounded-full transition-colors" />
           {isEditingProjectName ? (
@@ -232,6 +222,41 @@ const FlowCanvasInternal = () => {
             </span>
           )}
         </div>
+      </div>
+
+      {/* HUD - Top Right (Undo/Redo) */}
+      <div
+        className={`absolute top-6 right-24 z-10 flex gap-2 transition-opacity duration-300 ${isEditing || isDeleting ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
+        <Tooltip content="Undo (⌘Z)" position="bottom">
+          <button
+            onClick={() => undo()}
+            disabled={pastStates.length === 0}
+            className={clsx(
+              'p-2 bg-zinc-900/50 backdrop-blur-md border border-zinc-800 rounded-lg transition-colors shadow-xl',
+              pastStates.length === 0
+                ? 'opacity-30 cursor-not-allowed'
+                : 'text-zinc-300 hover:bg-zinc-800'
+            )}
+          >
+            <Undo2 className="w-4 h-4" />
+          </button>
+        </Tooltip>
+
+        <Tooltip content="Redo (⌘⇧Z)" position="bottom">
+          <button
+            onClick={() => redo()}
+            disabled={futureStates.length === 0}
+            className={clsx(
+              'p-2 bg-zinc-900/50 backdrop-blur-md border border-zinc-800 rounded-lg transition-colors shadow-xl',
+              futureStates.length === 0
+                ? 'opacity-30 cursor-not-allowed'
+                : 'text-zinc-300 hover:bg-zinc-800'
+            )}
+          >
+            <Redo2 className="w-4 h-4" />
+          </button>
+        </Tooltip>
       </div>
 
       {/* Component Menu Container */}
@@ -257,41 +282,6 @@ const FlowCanvasInternal = () => {
 
         <div className="h-8 w-px bg-zinc-800 mx-1 self-center" />
 
-        <Tooltip content="Undo (⌘Z)" position="top">
-          <button
-            onClick={() => undo()}
-            disabled={pastStates.length === 0}
-            className={clsx(
-              'p-2 bg-zinc-900/50 backdrop-blur-md border border-zinc-800 rounded-lg transition-colors shadow-xl',
-              pastStates.length === 0
-                ? 'opacity-30 cursor-not-allowed'
-                : 'text-zinc-300 hover:bg-zinc-800'
-            )}
-          >
-            <Undo2 className="w-4 h-4" />
-          </button>
-        </Tooltip>
-
-        <Tooltip content="Redo (⌘⇧Z)" position="top">
-          <button
-            onClick={() => redo()}
-            disabled={futureStates.length === 0}
-            className={clsx(
-              'p-2 bg-zinc-900/50 backdrop-blur-md border border-zinc-800 rounded-lg transition-colors shadow-xl',
-              futureStates.length === 0
-                ? 'opacity-30 cursor-not-allowed'
-                : 'text-zinc-300 hover:bg-zinc-800'
-            )}
-          >
-            <Redo2 className="w-4 h-4" />
-          </button>
-        </Tooltip>
-      </div>
-
-      {/* HUD - Bottom Right (Toolbar) */}
-      <div
-        className={`absolute bottom-6 right-6 z-10 flex gap-2 transition-opacity duration-300 ${isEditing || isDeleting ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-      >
         <Tooltip content="Remove disconnected nodes" position="top">
           <button
             onClick={removeOrphanedNodes}
@@ -319,6 +309,22 @@ const FlowCanvasInternal = () => {
           >
             <GitGraph className="w-4 h-4" />
             Format Tree
+          </button>
+        </Tooltip>
+      </div>
+
+      {/* HUD - Bottom Right (Toolbar) */}
+      <div
+        className={`absolute bottom-6 right-6 z-10 flex gap-2 transition-opacity duration-300 ${isEditing || isDeleting ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
+
+        <Tooltip content="Start a new query" position="top">
+          <button
+            onClick={handleNewConversation}
+            className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 backdrop-blur-md border border-primary/30 hover:bg-primary/20 text-primary rounded-lg transition-colors text-sm font-medium shadow-xl"
+          >
+            <Plus className="w-4 h-4" />
+            New Query
           </button>
         </Tooltip>
 
