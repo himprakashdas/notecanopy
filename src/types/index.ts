@@ -10,11 +10,13 @@ export interface Project {
 }
 
 export interface NodeData extends Record<string, unknown> {
-  label: string;
-  content: string;
-  type: 'user' | 'ai';
+  label: string; // The text content shown in the node
+  content: string; // The fuller content (sometimes used for hidden prompts)
+  type: 'user' | 'ai' | 'note';
   thinking?: boolean;
   createdAt: number;
+  isHidden?: boolean;
+  color?: string;
 }
 
 export type NoteTreeNode = Node<NodeData>;

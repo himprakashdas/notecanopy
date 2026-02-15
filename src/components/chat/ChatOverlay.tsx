@@ -5,11 +5,12 @@ import { useFlowStore } from '../../store/useFlowStore';
 import { useAppStore } from '../../store/useAppStore';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 import { Tooltip } from '../ui/Tooltip';
 
 const ChatOverlay = () => {
   const { editingNodeId, setEditingNodeId, nodes, updateNodeContent, addAIChild } = useFlowStore();
-  const { activeProject, fontSize, setFontSize } = useAppStore();
+  const { fontSize, setFontSize } = useAppStore();
   const { setCenter } = useReactFlow();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -26,18 +27,18 @@ const ChatOverlay = () => {
     }
   }, [editingNodeId]);
 
-  const handleSend = React.useCallback(() => {
+  const handleSend = React.useCallback(async () => {
     // Basic safety check
     if (!editingNodeId || !editingNode) return;
 
     // Only "send" and close if it's a user node with content
     if (isUser) {
       if (hasContent) {
-        const newNode = addAIChild(editingNodeId);
+        const newNode = await addAIChild(editingNodeId);
         if (newNode) {
           setCenter(newNode.position.x + 125, newNode.position.y + 100, {
             duration: 800,
-            zoom: 1
+            zoom: 1,
           });
         }
         setEditingNodeId(null);
@@ -85,7 +86,7 @@ const ChatOverlay = () => {
   const fontClasses: Record<'small' | 'medium' | 'large', string> = {
     small: 'text-sm',
     medium: 'text-xl',
-    large: 'text-3xl'
+    large: 'text-3xl',
   };
 
   return (
@@ -102,7 +103,9 @@ const ChatOverlay = () => {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-900/50">
           <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${editingNode.data.type === 'user' ? 'bg-zinc-400' : 'bg-rose-500'}`} />
+            <span
+              className={`w-2 h-2 rounded-full ${editingNode.data.type === 'user' ? 'bg-zinc-400' : 'bg-primary'}`}
+            />
             <h2 className="text-zinc-400 text-sm font-medium uppercase tracking-wider">
               {isUser ? 'Editing User Prompt' : 'Viewing AI Response'}
             </h2>
@@ -111,22 +114,30 @@ const ChatOverlay = () => {
           <div className="flex items-center gap-4">
             {!isUser && (
               <>
-                <Tooltip content={showMarkdown ? 'Show raw text' : 'Show markdown'} position="bottom">
+                <Tooltip
+                  content={showMarkdown ? 'Show raw text' : 'Show markdown'}
+                  position="bottom"
+                >
                   <button
                     onClick={() => setShowMarkdown(!showMarkdown)}
                     className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg transition-colors text-xs font-medium"
                   >
-                    {showMarkdown ? <Code className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
+                    {showMarkdown ? (
+                      <Code className="w-3.5 h-3.5" />
+                    ) : (
+                      <FileText className="w-3.5 h-3.5" />
+                    )}
                     {showMarkdown ? 'Raw' : 'Markdown'}
                   </button>
                 </Tooltip>
                 <Tooltip content="Copy to clipboard" position="bottom">
                   <button
                     onClick={handleCopy}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-medium ${copied
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-medium ${
+                      copied
                         ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50'
                         : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'
-                      }`}
+                    }`}
                   >
                     {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                     {copied ? 'Copied' : 'Copy'}
@@ -136,14 +147,20 @@ const ChatOverlay = () => {
             )}
             <div className="flex items-center bg-black border border-zinc-800 rounded-lg p-0.5">
               {(['small', 'medium', 'large'] as const).map((size) => (
-                <Tooltip key={size} content={`${size.charAt(0).toUpperCase() + size.slice(1)} Text`} position="bottom">
+                <Tooltip
+                  key={size}
+                  content={`${size.charAt(0).toUpperCase() + size.slice(1)} Text`}
+                  position="bottom"
+                >
                   <button
                     onClick={() => setFontSize(size)}
                     className={`
                       px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all
-                      ${fontSize === size
-                        ? 'bg-zinc-800 text-zinc-100'
-                        : 'text-zinc-500 hover:text-zinc-300'}
+                      ${
+                        fontSize === size
+                          ? 'bg-zinc-800 text-zinc-100'
+                          : 'text-zinc-500 hover:text-zinc-300'
+                      }
                     `}
                   >
                     {size[0]}
@@ -179,34 +196,40 @@ const ChatOverlay = () => {
               placeholder="Type your content here..."
               className={`w-full h-full bg-transparent text-zinc-100 ${fontClasses[fontSize]} leading-relaxed resize-none focus:outline-none placeholder:text-zinc-700`}
             />
-          ) : (
-            showMarkdown ? (
-              <div className={`markdown-content text-zinc-100 ${fontClasses[fontSize]} leading-relaxed`}>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {editingNode.data.label}
-                </ReactMarkdown>
-              </div>
-            ) : (
-              <pre className={`text-zinc-300 ${fontClasses[fontSize]} leading-relaxed font-mono whitespace-pre-wrap`}>
+          ) : showMarkdown ? (
+            <div
+              className={`markdown-content text-zinc-100 ${fontClasses[fontSize]} leading-relaxed`}
+            >
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
                 {editingNode.data.label}
-              </pre>
-            )
+              </ReactMarkdown>
+            </div>
+          ) : (
+            <pre
+              className={`text-zinc-300 ${fontClasses[fontSize]} leading-relaxed font-mono whitespace-pre-wrap`}
+            >
+              {editingNode.data.label}
+            </pre>
           )}
         </div>
 
         {/* Footer */}
         <div className="px-6 py-3 border-t border-zinc-800 bg-zinc-900/50 text-zinc-500 text-xs flex justify-between items-center">
-          <div>Esc to close • {isUser ? '⌘Enter to send' : '⌘Enter to close'} • Changes auto-save</div>
+          <div>
+            Esc to close • {isUser ? '⌘Enter to send' : '⌘Enter to close'} • Changes auto-save
+          </div>
           <div className="flex items-center gap-3">
             {isUser && (
               <button
                 onClick={handleSend}
                 disabled={!hasContent}
                 className={`
-                  flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all
-                  ${hasContent
-                    ? 'bg-rose-500 text-white hover:bg-rose-600 shadow-lg shadow-rose-500/20'
-                    : 'bg-zinc-800 text-zinc-600 cursor-not-allowed'}
+                  flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all active:scale-[0.98]
+                  ${
+                    hasContent
+                      ? 'bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20'
+                      : 'bg-zinc-800 text-zinc-600 cursor-not-allowed'
+                  }
                 `}
               >
                 <Send className="w-4 h-4" />
@@ -216,7 +239,7 @@ const ChatOverlay = () => {
             {!isUser && (
               <button
                 onClick={() => setEditingNodeId(null)}
-                className="px-4 py-2 bg-zinc-800 text-zinc-200 hover:bg-zinc-700 rounded-lg font-medium transition-colors"
+                className="px-6 py-3 bg-zinc-800 text-zinc-200 hover:bg-zinc-700 rounded-xl font-bold transition-all active:scale-[0.98]"
               >
                 Done
               </button>

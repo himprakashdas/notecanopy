@@ -10,7 +10,7 @@ export const db = new Dexie('NoteTreeDB') as Dexie & {
 db.version(1).stores({
   projects: 'id, lastModified',
   nodes: 'id, projectId',
-  edges: 'id, projectId, [projectId+id]'
+  edges: 'id, projectId, [projectId+id]',
 });
 
 export default db;

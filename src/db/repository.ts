@@ -14,8 +14,9 @@ export const projectRepository = {
       name,
       createdAt: now,
       lastModified: now,
-      systemPrompt: 'You are a helpful creative writing assistant that helps brainstorm and organize ideas in a tree structure.',
-      model: 'gemini-2.5-flash',
+      systemPrompt:
+        'You are a helpful creative writing assistant that helps brainstorm and organize ideas in a tree structure. Format your responses in Markdown. IMPORTANT: Use standard bullet points for lists. Do NOT use code blocks for lists or text. Use 2-space indentation for nested lists, NEVER 4 spaces.',
+      model: 'gemini-3-flash-preview',
     };
     await db.projects.add(project);
     return project;
@@ -41,9 +42,9 @@ export const projectRepository = {
     return db.transaction('rw', db.nodes, async () => {
       // Clear all existing nodes for this project before saving current state
       await db.nodes.where('projectId').equals(projectId).delete();
-      const dbNodes: DBNode[] = nodes.map(node => ({
+      const dbNodes: DBNode[] = nodes.map((node) => ({
         ...node,
-        projectId
+        projectId,
       }));
       return db.nodes.bulkPut(dbNodes);
     });
@@ -53,9 +54,9 @@ export const projectRepository = {
     return db.transaction('rw', db.edges, async () => {
       // Clear all existing edges for this project before saving current state
       await db.edges.where('projectId').equals(projectId).delete();
-      const dbEdges: DBEdge[] = edges.map(edge => ({
+      const dbEdges: DBEdge[] = edges.map((edge) => ({
         ...edge,
-        projectId
+        projectId,
       }));
       return db.edges.bulkPut(dbEdges);
     });
@@ -71,7 +72,7 @@ export const projectRepository = {
     const node = await db.nodes.get(nodeId);
     if (node && node.projectId === projectId) {
       return db.nodes.update(nodeId, {
-        data: { ...node.data, label }
+        data: { ...node.data, label },
       });
     }
   },
@@ -85,14 +86,17 @@ export const projectRepository = {
     const project = await db.projects.get(projectId);
     if (!project) throw new Error('Project not found');
 
-    const allNodes = providedNodes || await db.nodes.where('projectId').equals(projectId).toArray() as NoteTreeNode[];
-    const allEdges = (providedEdges || await db.edges.where('projectId').equals(projectId).toArray()) as NoteTreeEdge[];
+    const allNodes =
+      providedNodes ||
+      ((await db.nodes.where('projectId').equals(projectId).toArray()) as NoteTreeNode[]);
+    const allEdges = (providedEdges ||
+      (await db.edges.where('projectId').equals(projectId).toArray())) as NoteTreeEdge[];
 
-    const nodeMap = new Map(allNodes.map(n => [n.id, n]));
+    const nodeMap = new Map(allNodes.map((n) => [n.id, n]));
     const parentToChildren = new Map<string, string[]>();
     const childToParent = new Map<string, string>();
 
-    allEdges.forEach(edge => {
+    allEdges.forEach((edge) => {
       if (!parentToChildren.has(edge.source)) {
         parentToChildren.set(edge.source, []);
       }
@@ -119,8 +123,7 @@ export const projectRepository = {
 
     return {
       systemPrompt: project.systemPrompt,
-      contextNodes
+      contextNodes,
     };
-  }
+  },
 };
-

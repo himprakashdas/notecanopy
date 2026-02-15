@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
-import { Plus, Trash2, FolderOpen, Loader2, Edit2 } from 'lucide-react';
+import { Trash2, FolderOpen, Loader2, Edit2, Download } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { Project } from '../../types';
+import { ProjectExportModal } from '../layout/ProjectExportModal';
+import { projectRepository } from '../../db/repository';
+import { exportToJSON, exportToMarkdown, downloadFile } from '../../utils/export';
 
 export function ProjectGallery() {
-  const { projects, isLoading, fetchProjects, createProject, deleteProject, setActiveProject, renameProject } = useAppStore();
+  const {
+    projects,
+    isLoading,
+    fetchProjects,
+    createProject,
+    deleteProject,
+    setActiveProject,
+    renameProject,
+  } = useAppStore();
   const [isCreating, setIsCreating] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [editingProjectName, setEditingProjectName] = useState('');
+  const [projectToExport, setProjectToExport] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     fetchProjects();
@@ -31,12 +38,52 @@ export function ProjectGallery() {
 
   const handleDeleteProject = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (confirm('Are you sure you want to delete this project? All nodes and edges will be permanently removed.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete this project? All nodes and edges will be permanently removed.'
+      )
+    ) {
       await deleteProject(id);
     }
   };
 
-  const handleEditProject = (e: React.MouseEvent, project: any) => {
+  const handleExportClick = (e: React.MouseEvent, project: { id: string; name: string }) => {
+    e.stopPropagation();
+    setProjectToExport(project);
+  };
+
+  const handleExportConfirm = async (format: 'markdown' | 'json') => {
+    if (!projectToExport) return;
+
+    try {
+      const project = projects.find((p) => p.id === projectToExport.id);
+      if (!project) return;
+
+      const { nodes, edges } = await projectRepository.getProjectData(project.id);
+
+      let content = '';
+      let filename = '';
+      let type = '';
+
+      if (format === 'json') {
+        content = exportToJSON(project, nodes, edges);
+        filename = `${project.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_export.json`;
+        type = 'application/json';
+      } else {
+        content = exportToMarkdown(project, nodes, edges);
+        filename = `${project.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_export.md`;
+        type = 'text/markdown';
+      }
+
+      downloadFile(content, filename, type);
+    } catch (error) {
+      console.error('Export failed:', error);
+    } finally {
+      setProjectToExport(null);
+    }
+  };
+
+  const handleEditProject = (e: React.MouseEvent, project: Project) => {
     e.stopPropagation();
     setEditingProjectId(project.id);
     setEditingProjectName(project.name);
@@ -63,7 +110,9 @@ export function ProjectGallery() {
       <div className="max-w-5xl mx-auto">
         <header className="mb-12">
           <h2 className="text-3xl font-bold text-zinc-100 mb-2">Welcome to NoteTree</h2>
-          <p className="text-zinc-500">Pick a project from the sidebar to continue your learning journey.</p>
+          <p className="text-zinc-500">
+            Pick a project from the sidebar to continue your learning journey.
+          </p>
         </header>
 
         {isCreating && (
@@ -132,6 +181,13 @@ export function ProjectGallery() {
                   )}
                   <div className="flex gap-1">
                     <button
+                      onClick={(e) => handleExportClick(e, project)}
+                      className="text-gray-600 hover:text-indigo-400 p-1 rounded-md transition-colors"
+                      title="Export Project"
+                    >
+                      <Download size={18} />
+                    </button>
+                    <button
                       onClick={(e) => handleEditProject(e, project)}
                       className="text-gray-600 hover:text-primary p-1 rounded-md transition-colors"
                     >
@@ -153,6 +209,13 @@ export function ProjectGallery() {
           </div>
         )}
       </div>
+
+      <ProjectExportModal
+        isOpen={!!projectToExport}
+        projectName={projectToExport?.name || ''}
+        onClose={() => setProjectToExport(null)}
+        onExportGeneric={handleExportConfirm}
+      />
     </div>
   );
 }

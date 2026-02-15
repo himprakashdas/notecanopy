@@ -14,17 +14,20 @@ Thanks for considering contributing to NoteTree! This document will help you get
 
 1. Fork the repository on GitHub
 2. Clone your fork locally:
+
    ```bash
    git clone https://github.com/yourusername/notetree.git
    cd notetree
    ```
 
 3. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 4. Set up your environment variables:
+
    ```bash
    cp .env.example .env
    # Add your API keys to .env
@@ -40,6 +43,7 @@ Thanks for considering contributing to NoteTree! This document will help you get
 ### Reporting Bugs
 
 Found a bug? Please open an issue with:
+
 - A clear, descriptive title
 - Steps to reproduce the problem
 - What you expected to happen vs what actually happened
@@ -49,6 +53,7 @@ Found a bug? Please open an issue with:
 ### Suggesting Features
 
 Have an idea? Open an issue with:
+
 - A clear description of the feature
 - Why you think it would be useful
 - Any implementation ideas you have
@@ -56,6 +61,7 @@ Have an idea? Open an issue with:
 ### Submitting Code
 
 1. **Create a branch** for your changes:
+
    ```bash
    git checkout -b feature/your-feature-name
    # or
@@ -74,11 +80,12 @@ Have an idea? Open an issue with:
    - Check that you didn't break existing functionality
 
 4. **Commit your changes**:
+
    ```bash
    git add .
    git commit -m "feat: add amazing new feature"
    ```
-   
+
    Use conventional commit messages:
    - `feat:` for new features
    - `fix:` for bug fixes
@@ -89,6 +96,7 @@ Have an idea? Open an issue with:
    - `chore:` for maintenance tasks
 
 5. **Push to your fork**:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -150,6 +158,7 @@ src/
 ## Database Schema
 
 NoteTree uses Dexie (IndexedDB) for local storage:
+
 - **projects**: Project metadata
 - **nodes**: Individual conversation nodes
 - **edges**: Connections between nodes
@@ -159,6 +168,7 @@ When making changes to the schema, ensure backward compatibility or provide migr
 ## AI Integration
 
 The app supports multiple AI providers through a unified interface in `src/utils/ai.ts`. When adding support for new providers:
+
 - Follow the existing pattern
 - Handle errors gracefully with user-friendly messages
 - Support streaming responses
@@ -167,6 +177,7 @@ The app supports multiple AI providers through a unified interface in `src/utils
 ## Testing
 
 Currently, the project doesn't have automated tests (contributions welcome!). For now:
+
 - Manually test your changes thoroughly
 - Test in different browsers if possible
 - Check the console for errors

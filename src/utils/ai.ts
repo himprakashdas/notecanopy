@@ -1,11 +1,10 @@
 import { NoteTreeNode, NoteTreeEdge } from '../types';
 import { projectRepository } from '../db/repository';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from '@google/genai';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const getClient = (apiKey: string) => new GoogleGenAI({ apiKey, httpOptions: { apiVersion: 'v1beta' } });
 
-export const getGeminiModelName = (modelName = "gemini-2.5-flash") => {
+export const getGeminiModelName = (modelName = 'gemini-3-flash-preview') => {
   return modelName;
 };
 
@@ -56,7 +55,12 @@ export async function createContextSnapshot(
   nodes?: NoteTreeNode[],
   edges?: NoteTreeEdge[]
 ): Promise<ContextSnapshot> {
-  const { systemPrompt, contextNodes } = await projectRepository.getAIContext(projectId, nodeId, nodes, edges);
+  const { systemPrompt, contextNodes } = await projectRepository.getAIContext(
+    projectId,
+    nodeId,
+    nodes,
+    edges
+  );
 
   return {
     systemPrompt,
@@ -67,17 +71,23 @@ export async function createContextSnapshot(
 /**
  * Helper to get the GenAI client instance
  */
-export const getGenAIClient = () => ai;
+export const getGenAIClient = (apiKey: string) => getClient(apiKey);
 
 /**
  * SDK-native token counting
  */
-export async function countTokens(model = "gemini-2.5-flash", contents: GeminiMessage[], systemInstruction?: string) {
+export async function countTokens(
+  apiKey: string,
+  model = 'gemini-3-flash-preview',
+  contents: GeminiMessage[],
+  systemInstruction?: string
+) {
   try {
-    const response = await ai.models.countTokens({
+    const client = getClient(apiKey);
+    const response = await client.models.countTokens({
       model,
       contents,
-      config: systemInstruction ? { systemInstruction } : undefined
+      config: systemInstruction ? { systemInstruction } : undefined,
     });
     return response.totalTokens;
   } catch (error) {

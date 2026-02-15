@@ -34,15 +34,11 @@ export const useHotkeys = () => {
       }
 
       // 3. Redo: Cmd+Shift+Z or Cmd+Y
-      if (
-        (metaOrCtrl && key === 'z' && event.shiftKey) ||
-        (metaOrCtrl && key === 'y')
-      ) {
+      if ((metaOrCtrl && key === 'z' && event.shiftKey) || (metaOrCtrl && key === 'y')) {
         event.preventDefault();
         useFlowStore.temporal.getState().redo();
         return;
       }
-
 
       // 4. Save: Cmd+S or Ctrl+S
       if (metaOrCtrl && key === 's') {
@@ -69,20 +65,23 @@ export const useHotkeys = () => {
           const parentId = selectedNode.id;
 
           if (selectedNode.data.thinking) return;
-          let newNode;
-          if (selectedNode.data.type === 'user') {
-            newNode = addAIChild(parentId);
-          } else {
-            newNode = addBranch(parentId);
-          }
 
-          if (newNode) {
-            // Auto-pan to the new node
-            setCenter(newNode.position.x + 125, newNode.position.y + 100, {
-              duration: 800,
-              zoom: 1
-            });
-          }
+          (async () => {
+            let newNode;
+            if (selectedNode.data.type === 'user') {
+              newNode = await addAIChild(parentId);
+            } else {
+              newNode = await addBranch(parentId);
+            }
+
+            if (newNode) {
+              // Auto-pan to the new node
+              setCenter(newNode.position.x + 125, newNode.position.y + 100, {
+                duration: 800,
+                zoom: 1,
+              });
+            }
+          })();
         }
         return;
       }

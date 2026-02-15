@@ -17,7 +17,6 @@ export function usePersistence() {
 
     timerRef.current = setTimeout(async () => {
       // Access store directly for status updates to avoid re-triggering this effect
-      const store = useFlowStore.getState();
 
       try {
         await projectRepository.saveNodes(activeProjectId, nodes);

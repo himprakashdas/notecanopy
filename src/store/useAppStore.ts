@@ -7,6 +7,8 @@ interface AppState {
   activeProject: Project | null;
   isLoading: boolean;
   fontSize: 'small' | 'medium' | 'large';
+  theme: string;
+  geminiApiKey: string | null;
 
   // Actions
   fetchProjects: () => Promise<void>;
@@ -16,6 +18,8 @@ interface AppState {
   deleteProject: (id: string) => Promise<void>;
   renameProject: (id: string, newName: string) => Promise<void>;
   setFontSize: (size: 'small' | 'medium' | 'large') => void;
+  setTheme: (theme: string) => void;
+  setGeminiApiKey: (key: string | null) => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -70,9 +74,26 @@ export const useAppStore = create<AppState>((set, get) => ({
     await get().fetchProjects();
   },
 
-  fontSize: (localStorage.getItem('notetree-font-size') as any) || 'medium',
+  fontSize:
+    (localStorage.getItem('notetree-font-size') as 'small' | 'medium' | 'large') || 'medium',
   setFontSize: (size) => {
     localStorage.setItem('notetree-font-size', size);
     set({ fontSize: size });
+  },
+
+  theme: localStorage.getItem('notetree-theme') || 'default',
+  setTheme: (theme) => {
+    localStorage.setItem('notetree-theme', theme);
+    set({ theme });
+  },
+
+  geminiApiKey: localStorage.getItem('notetree-gemini-api-key'),
+  setGeminiApiKey: (key) => {
+    if (key) {
+      localStorage.setItem('notetree-gemini-api-key', key);
+    } else {
+      localStorage.removeItem('notetree-gemini-api-key');
+    }
+    set({ geminiApiKey: key });
   },
 }));
