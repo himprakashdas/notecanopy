@@ -1,7 +1,8 @@
 import Dexie, { type EntityTable } from 'dexie';
-import { Project, DBNode, DBEdge } from '../types';
+import { APP_NAME } from '../config';
+import { DBNode, DBEdge, Project } from '../types';
 
-export const db = new Dexie('NoteTreeDB') as Dexie & {
+export const db = new Dexie(`${APP_NAME}DB`) as Dexie & {
   projects: EntityTable<Project, 'id'>;
   nodes: EntityTable<DBNode, 'id'>;
   edges: EntityTable<DBEdge, 'id'>;

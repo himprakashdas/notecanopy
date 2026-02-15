@@ -7,6 +7,7 @@ import { clsx } from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
 import { Tooltip } from '../ui/Tooltip';
 import { ProjectDeleteModal } from './ProjectDeleteModal';
+import { APP_NAME } from '../../config';
 import { importProjectFromJSON } from '../../utils/import';
 
 export function Sidebar() {
@@ -114,10 +115,10 @@ export function Sidebar() {
         <div className="flex items-center gap-3 mb-6">
           <img
             src="/logo.png"
-            alt="NoteTree"
+            alt={APP_NAME}
             className="w-8 h-8 rounded-lg shadow-lg shadow-primary/40"
           />
-          <h1 className="font-bold text-xl tracking-tight text-zinc-100">NoteTree</h1>
+          <h1 className="font-bold text-xl tracking-tight text-zinc-100">{APP_NAME}</h1>
         </div>
 
         <div className="flex gap-2">

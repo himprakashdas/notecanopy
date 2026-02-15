@@ -3,6 +3,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { Trash2, FolderOpen, Loader2, Edit2, Download } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Project } from '../../types';
+import { APP_NAME } from '../../config';
 import { ProjectExportModal } from '../layout/ProjectExportModal';
 import { projectRepository } from '../../db/repository';
 import { exportToJSON, exportToMarkdown, downloadFile } from '../../utils/export';
@@ -109,7 +110,7 @@ export function ProjectGallery() {
     <div className="h-full bg-black text-white p-12 overflow-y-auto custom-scrollbar">
       <div className="max-w-5xl mx-auto">
         <header className="mb-12">
-          <h2 className="text-3xl font-bold text-zinc-100 mb-2">Welcome to NoteTree</h2>
+          <h2 className="text-3xl font-bold text-zinc-100 mb-2">Welcome to {APP_NAME}</h2>
           <p className="text-zinc-500">
             Pick a project from the sidebar to continue your learning journey.
           </p>
