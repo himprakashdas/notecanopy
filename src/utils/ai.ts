@@ -1,4 +1,4 @@
-import { NoteTreeNode, NoteTreeEdge } from '../types';
+import { NoteCanopyNode, NoteCanopyEdge } from '../types';
 import { projectRepository } from '../db/repository';
 import { GoogleGenAI } from '@google/genai';
 
@@ -22,7 +22,7 @@ export interface ContextSnapshot {
  * Formats context nodes into Gemini-compatible history.
  * Merges consecutive messages with the same role to ensure alternating roles.
  */
-export function formatPrompt(systemPrompt: string, contextNodes: NoteTreeNode[]): GeminiMessage[] {
+export function formatPrompt(systemPrompt: string, contextNodes: NoteCanopyNode[]): GeminiMessage[] {
   const messages: GeminiMessage[] = [];
 
   contextNodes.forEach((node) => {
@@ -52,8 +52,8 @@ export function formatPrompt(systemPrompt: string, contextNodes: NoteTreeNode[])
 export async function createContextSnapshot(
   projectId: string,
   nodeId: string,
-  nodes?: NoteTreeNode[],
-  edges?: NoteTreeEdge[]
+  nodes?: NoteCanopyNode[],
+  edges?: NoteCanopyEdge[]
 ): Promise<ContextSnapshot> {
   const { systemPrompt, contextNodes } = await projectRepository.getAIContext(
     projectId,

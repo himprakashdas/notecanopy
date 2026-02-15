@@ -3,7 +3,7 @@ import { Handle, Position, NodeProps, useReactFlow, NodeResizer } from '@xyflow/
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { Plus, Trash2, Send, Square, Copy, Check, StickyNote, Maximize } from 'lucide-react';
-import { NoteTreeNode } from '../../types';
+import { NoteCanopyNode } from '../../types';
 import { useFlowStore } from '../../store/useFlowStore';
 import { useAIStore } from '../../store/useAIStore';
 import { useAppStore } from '../../store/useAppStore';
@@ -13,7 +13,7 @@ import rehypeSanitize from 'rehype-sanitize';
 import { Tooltip } from '../ui/Tooltip';
 import { ConfirmationModal } from '../ui/ConfirmationModal';
 
-const ChatNode = ({ id, data, selected }: NodeProps<NoteTreeNode>) => {
+const ChatNode = ({ id, data, selected }: NodeProps<NoteCanopyNode>) => {
   const [copied, setCopied] = useState(false);
   const isUser = data.type === 'user';
   const addBranch = useFlowStore((state) => state.addBranch);

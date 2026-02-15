@@ -75,24 +75,24 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   fontSize:
-    (localStorage.getItem('notetree-font-size') as 'small' | 'medium' | 'large') || 'medium',
+    (localStorage.getItem('NoteCanopy-font-size') as 'small' | 'medium' | 'large') || 'medium',
   setFontSize: (size) => {
-    localStorage.setItem('notetree-font-size', size);
+    localStorage.setItem('NoteCanopy-font-size', size);
     set({ fontSize: size });
   },
 
-  theme: localStorage.getItem('notetree-theme') || 'default',
+  theme: localStorage.getItem('NoteCanopy-theme') || 'default',
   setTheme: (theme) => {
-    localStorage.setItem('notetree-theme', theme);
+    localStorage.setItem('NoteCanopy-theme', theme);
     set({ theme });
   },
 
-  geminiApiKey: localStorage.getItem('notetree-gemini-api-key'),
+  geminiApiKey: localStorage.getItem('NoteCanopy-gemini-api-key'),
   setGeminiApiKey: (key) => {
     if (key) {
-      localStorage.setItem('notetree-gemini-api-key', key);
+      localStorage.setItem('NoteCanopy-gemini-api-key', key);
     } else {
-      localStorage.removeItem('notetree-gemini-api-key');
+      localStorage.removeItem('NoteCanopy-gemini-api-key');
     }
     set({ geminiApiKey: key });
   },

@@ -1,8 +1,8 @@
-# Product Requirements Document (PRD): NoteTree
+# Product Requirements Document (PRD): NoteCanopy
 
 ## 1. Executive Summary
 
-- **Product Name:** NoteTree
+- **Product Name:** NoteCanopy
 - **Status:** Draft
 - **Primary Objective:** To provide a non-linear, tree-based desktop interface for interacting with LLMs, enabling deep exploratory learning while preventing context drift and cognitive overhead.
 

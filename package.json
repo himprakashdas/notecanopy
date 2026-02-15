@@ -1,5 +1,5 @@
 {
-  "name": "notetree",
+  "name": "NoteCanopy",
   "version": "0.1.0",
   "description": "A contextual hierarchical learning interface for LLMs",
   "private": true,

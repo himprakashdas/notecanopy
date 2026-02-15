@@ -19,13 +19,13 @@ export interface NodeData extends Record<string, unknown> {
   color?: string;
 }
 
-export type NoteTreeNode = Node<NodeData>;
-export type NoteTreeEdge = Edge;
+export type NoteCanopyNode = Node<NodeData>;
+export type NoteCanopyEdge = Edge;
 
-export interface DBNode extends NoteTreeNode {
+export interface DBNode extends NoteCanopyNode {
   projectId: string;
 }
 
-export interface DBEdge extends NoteTreeEdge {
+export interface DBEdge extends NoteCanopyEdge {
   projectId: string;
 }

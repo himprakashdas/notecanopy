@@ -1,4 +1,4 @@
-import { Project, NoteTreeNode, NoteTreeEdge } from '../types';
+import { Project, NoteCanopyNode, NoteCanopyEdge } from '../types';
 
 /**
  * Downloads a string content as a file in the browser.
@@ -20,8 +20,8 @@ export const downloadFile = (content: string, filename: string, type: string) =>
  */
 export const exportToJSON = (
   project: Project,
-  nodes: NoteTreeNode[],
-  edges: NoteTreeEdge[]
+  nodes: NoteCanopyNode[],
+  edges: NoteCanopyEdge[]
 ): string => {
   const data = {
     project,
@@ -38,8 +38,8 @@ export const exportToJSON = (
  */
 export const exportToMarkdown = (
   project: Project,
-  nodes: NoteTreeNode[],
-  edges: NoteTreeEdge[]
+  nodes: NoteCanopyNode[],
+  edges: NoteCanopyEdge[]
 ): string => {
   if (!nodes.length) return `# ${project.name}\n\n(No content)`;
 

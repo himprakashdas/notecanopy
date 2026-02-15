@@ -3,12 +3,12 @@ import { NodeProps, NodeResizer } from '@xyflow/react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { Trash2, Info, EyeOff, StickyNote } from 'lucide-react';
-import { NoteTreeNode } from '../../types';
+import { NoteCanopyNode } from '../../types';
 import { useFlowStore } from '../../store/useFlowStore';
 import { useAppStore } from '../../store/useAppStore';
 import { Tooltip } from '../ui/Tooltip';
 
-const NoteNode = ({ id, data, selected }: NodeProps<NoteTreeNode>) => {
+const NoteNode = ({ id, data, selected }: NodeProps<NoteCanopyNode>) => {
   const setDeletingNodeId = useFlowStore((state) => state.setDeletingNodeId);
   const updateNodeContent = useFlowStore((state) => state.updateNodeContent);
   const toggleNoteVisibility = useFlowStore((state) => state.toggleNoteVisibility);

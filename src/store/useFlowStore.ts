@@ -10,15 +10,15 @@ import {
   OnConnect,
 } from '@xyflow/react';
 import { nanoid } from 'nanoid';
-import { NoteTreeNode, NoteTreeEdge } from '../types';
+import { NoteCanopyNode, NoteCanopyEdge } from '../types';
 import { projectRepository } from '../db/repository';
 import { useAIStore } from './useAIStore';
 import { useAppStore } from './useAppStore';
 import { createContextSnapshot } from '../utils/ai';
 
 interface FlowState {
-  nodes: NoteTreeNode[];
-  edges: NoteTreeEdge[];
+  nodes: NoteCanopyNode[];
+  edges: NoteCanopyEdge[];
   editingNodeId: string | null;
   deletingNodeId: string | null;
   isLoading: boolean;
@@ -26,14 +26,14 @@ interface FlowState {
   areNotesHidden: boolean;
 
   // Actions
-  onNodesChange: OnNodesChange<NoteTreeNode>;
-  onEdgesChange: OnEdgesChange<NoteTreeEdge>;
+  onNodesChange: OnNodesChange<NoteCanopyNode>;
+  onEdgesChange: OnEdgesChange<NoteCanopyEdge>;
   onConnect: OnConnect;
-  setNodes: (nodes: NoteTreeNode[]) => void;
-  setEdges: (edges: NoteTreeEdge[]) => void;
-  addNode: (node: NoteTreeNode) => void;
-  addBranch: (parentId: string) => Promise<NoteTreeNode | undefined>;
-  addAIChild: (parentId: string) => Promise<NoteTreeNode | undefined>;
+  setNodes: (nodes: NoteCanopyNode[]) => void;
+  setEdges: (edges: NoteCanopyEdge[]) => void;
+  addNode: (node: NoteCanopyNode) => void;
+  addBranch: (parentId: string) => Promise<NoteCanopyNode | undefined>;
+  addAIChild: (parentId: string) => Promise<NoteCanopyNode | undefined>;
   addNoteChild: (parentId: string) => Promise<void>;
   deleteNodeOnly: (nodeId: string) => void;
   deleteNodeAndDescendants: (nodeId: string) => void;
@@ -81,7 +81,7 @@ export const useFlowStore = create<FlowState>()(
       onConnect: (connection) => {
         const newEdges = addEdge(connection, get().edges);
         set({
-          edges: newEdges as NoteTreeEdge[],
+          edges: newEdges as NoteCanopyEdge[],
         });
       },
 
@@ -114,7 +114,7 @@ export const useFlowStore = create<FlowState>()(
           typeof parentNode.style?.height === 'number' ? parentNode.style.height : 120;
         const V_GAP = parentHeight + 60;
 
-        const newNode: NoteTreeNode = {
+        const newNode: NoteCanopyNode = {
           id: newNodeId,
           type: 'chatNode',
           position: {
@@ -133,7 +133,7 @@ export const useFlowStore = create<FlowState>()(
           style: { width: 250, height: 120 },
         };
 
-        const newEdge: NoteTreeEdge = {
+        const newEdge: NoteCanopyEdge = {
           id: `e-${actualParentId}-${newNodeId}`,
           source: actualParentId,
           target: newNodeId,
@@ -171,7 +171,7 @@ export const useFlowStore = create<FlowState>()(
           return side * rank * H_GAP;
         };
 
-        const newNode: NoteTreeNode = {
+        const newNode: NoteCanopyNode = {
           id: newNodeId,
           type: 'chatNode',
           position: {
@@ -188,7 +188,7 @@ export const useFlowStore = create<FlowState>()(
           style: { width: 450, height: 562 },
         };
 
-        const newEdge: NoteTreeEdge = {
+        const newEdge: NoteCanopyEdge = {
           id: `e-${parentId}-${newNodeId}`,
           source: parentId,
           target: newNodeId,
@@ -224,7 +224,7 @@ export const useFlowStore = create<FlowState>()(
         const parentWidth =
           typeof parentNode.style?.width === 'number' ? parentNode.style.width : 250;
 
-        const newNode: NoteTreeNode = {
+        const newNode: NoteCanopyNode = {
           id: newNodeId,
           type: 'noteNode',
           position: {
@@ -242,7 +242,7 @@ export const useFlowStore = create<FlowState>()(
           dragHandle: '.custom-drag-handle',
         };
 
-        const newEdge: NoteTreeEdge = {
+        const newEdge: NoteCanopyEdge = {
           id: `e-${parentId}-${newNodeId}`,
           source: parentId,
           target: newNodeId,
@@ -317,8 +317,8 @@ export const useFlowStore = create<FlowState>()(
           const { nodes, edges } = await projectRepository.getProjectData(projectId);
           useFlowStore.temporal.getState().clear();
           set({
-            nodes: nodes as NoteTreeNode[],
-            edges: edges as NoteTreeEdge[],
+            nodes: nodes as NoteCanopyNode[],
+            edges: edges as NoteCanopyEdge[],
             isLoading: false,
           });
         } catch (error) {
@@ -448,11 +448,11 @@ export const useFlowStore = create<FlowState>()(
           // Separate Note Children vs Chat Children
           const noteChildren = allChildEdges
             .map((e) => newNodes.find((n) => n.id === e.target))
-            .filter((n) => n && n.type === 'noteNode') as NoteTreeNode[];
+            .filter((n) => n && n.type === 'noteNode') as NoteCanopyNode[];
 
           const chatChildren = allChildEdges
             .map((e) => newNodes.find((n) => n.id === e.target))
-            .filter((n) => n && n.type !== 'noteNode') as NoteTreeNode[];
+            .filter((n) => n && n.type !== 'noteNode') as NoteCanopyNode[];
 
           // 3. Layout Attached Notes (To the Right)
           if (noteChildren.length > 0) {
@@ -550,7 +550,7 @@ export const useFlowStore = create<FlowState>()(
 
       createNote: (position) => {
         const newNodeId = nanoid();
-        const newNode: NoteTreeNode = {
+        const newNode: NoteCanopyNode = {
           id: newNodeId,
           type: 'noteNode',
           position,

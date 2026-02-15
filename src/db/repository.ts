@@ -1,5 +1,5 @@
 import { db } from './schema';
-import { Project, NoteTreeNode, NoteTreeEdge, DBNode, DBEdge } from '../types';
+import { Project, NoteCanopyNode, NoteCanopyEdge, DBNode, DBEdge } from '../types';
 import { nanoid } from 'nanoid';
 
 export const projectRepository = {
@@ -38,7 +38,7 @@ export const projectRepository = {
   },
 
   // Node & Edge persistence
-  async saveNodes(projectId: string, nodes: NoteTreeNode[]) {
+  async saveNodes(projectId: string, nodes: NoteCanopyNode[]) {
     return db.transaction('rw', db.nodes, async () => {
       // Clear all existing nodes for this project before saving current state
       await db.nodes.where('projectId').equals(projectId).delete();
@@ -50,7 +50,7 @@ export const projectRepository = {
     });
   },
 
-  async saveEdges(projectId: string, edges: NoteTreeEdge[]) {
+  async saveEdges(projectId: string, edges: NoteCanopyEdge[]) {
     return db.transaction('rw', db.edges, async () => {
       // Clear all existing edges for this project before saving current state
       await db.edges.where('projectId').equals(projectId).delete();
@@ -80,17 +80,17 @@ export const projectRepository = {
   async getAIContext(
     projectId: string,
     parentNodeId: string,
-    providedNodes?: NoteTreeNode[],
-    providedEdges?: NoteTreeEdge[]
-  ): Promise<{ systemPrompt: string; contextNodes: NoteTreeNode[] }> {
+    providedNodes?: NoteCanopyNode[],
+    providedEdges?: NoteCanopyEdge[]
+  ): Promise<{ systemPrompt: string; contextNodes: NoteCanopyNode[] }> {
     const project = await db.projects.get(projectId);
     if (!project) throw new Error('Project not found');
 
     const allNodes =
       providedNodes ||
-      ((await db.nodes.where('projectId').equals(projectId).toArray()) as NoteTreeNode[]);
+      ((await db.nodes.where('projectId').equals(projectId).toArray()) as NoteCanopyNode[]);
     const allEdges = (providedEdges ||
-      (await db.edges.where('projectId').equals(projectId).toArray())) as NoteTreeEdge[];
+      (await db.edges.where('projectId').equals(projectId).toArray())) as NoteCanopyEdge[];
 
     const nodeMap = new Map(allNodes.map((n) => [n.id, n]));
     const parentToChildren = new Map<string, string[]>();
@@ -105,7 +105,7 @@ export const projectRepository = {
     });
 
     // 1. Find Ancestor Path for parentNodeId (the direct line)
-    const path: NoteTreeNode[] = [];
+    const path: NoteCanopyNode[] = [];
     let currentId: string | undefined = parentNodeId;
     while (currentId) {
       const node = nodeMap.get(currentId);

@@ -1,11 +1,11 @@
 import { nanoid } from 'nanoid';
-import { Project, NoteTreeNode, NoteTreeEdge, DBNode, DBEdge } from '../types';
+import { Project, NoteCanopyNode, NoteCanopyEdge, DBNode, DBEdge } from '../types';
 import { db } from '../db/schema';
 
 interface ExportData {
   project: Project;
-  nodes: NoteTreeNode[];
-  edges: NoteTreeEdge[];
+  nodes: NoteCanopyNode[];
+  edges: NoteCanopyEdge[];
   version: string;
   exportDate: string;
 }
@@ -15,8 +15,8 @@ interface ExportData {
  * Preserves the graph structure by mapping old IDs to new ones.
  */
 const prepareImportData = (
-  nodes: NoteTreeNode[],
-  edges: NoteTreeEdge[],
+  nodes: NoteCanopyNode[],
+  edges: NoteCanopyEdge[],
   projectId: string
 ): { newNodes: DBNode[]; newEdges: DBEdge[] } => {
   const nodeIdMap = new Map<string, string>();

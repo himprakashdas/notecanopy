@@ -33,7 +33,7 @@ import ChatNode from './ChatNode';
 import NoteNode from './NoteNode';
 import ChatOverlay from '../chat/ChatOverlay';
 import { DeletionModal } from './DeletionModal';
-import { NoteTreeNode } from '../../types';
+import { NoteCanopyNode } from '../../types';
 import { Tooltip } from '../ui/Tooltip';
 import { useStore } from 'zustand';
 import { ConfirmationModal } from '../ui/ConfirmationModal';
@@ -116,7 +116,7 @@ const FlowCanvasInternal = () => {
 
   const handleNewConversation = () => {
     const newNodeId = nanoid();
-    const newNode: NoteTreeNode = {
+    const newNode: NoteCanopyNode = {
       id: newNodeId,
       type: 'chatNode',
       position: { x: 0, y: 0 },
@@ -136,7 +136,7 @@ const FlowCanvasInternal = () => {
 
   const startChat = useCallback(() => {
     const newNodeId = nanoid();
-    const newNode: NoteTreeNode = {
+    const newNode: NoteCanopyNode = {
       id: newNodeId,
       type: 'chatNode',
       position: { x: 0, y: 0 },

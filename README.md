@@ -1,22 +1,22 @@
 <p align="center">
-  <img src="public/full-logo.png" alt="NoteTree Logo" width="600">
+  <img src="public/full-logo.png" alt="NoteCanopy Logo" width="600">
 </p>
 
-# NoteTree
+# NoteCanopy
 
-Think of NoteTree as a mind map for conversations with AI. Instead of scrolling through endless chat history, you organize your thoughts in a tree structure where each branch is its own conversation thread.
+Think of NoteCanopy as a mind map for conversations with AI. Instead of scrolling through endless chat history, you organize your thoughts in a tree structure where each branch is its own conversation thread.
 
-![NoteTree Screenshot](public/screenshot.jpeg)
+![NoteCanopy Screenshot](public/screenshot.jpeg)
 
 ## What is this?
 
 Ever had a conversation with ChatGPT or Claude where you wanted to explore multiple ideas from the same starting point? Or found yourself scrolling up and down trying to remember what you were talking about five messages ago?
 
-NoteTree solves this by letting you branch conversations. Start with a root question, then create child nodes for follow-up questions. Each branch maintains its own context without polluting the others. It's like having multiple chat windows that all remember their parent conversation.
+NoteCanopy solves this by letting you branch conversations. Start with a root question, then create child nodes for follow-up questions. Each branch maintains its own context without polluting the others. It's like having multiple chat windows that all remember their parent conversation.
 
 ## Why would I use this?
 
-**For learning complex topics:** When you're diving deep into something new, you often need to ask clarifying questions without losing your main thread. With NoteTree, you can branch off to ask "wait, what does that term mean?" and then return to your main conversation without the AI getting confused.
+**For learning complex topics:** When you're diving deep into something new, you often need to ask clarifying questions without losing your main thread. With NoteCanopy, you can branch off to ask "wait, what does that term mean?" and then return to your main conversation without the AI getting confused.
 
 **For research and exploration:** Exploring multiple angles of a problem becomes way easier when you can visualize how your questions relate to each other. Each branch is isolated, so you can try different approaches without context bleeding between them.
 
@@ -41,8 +41,8 @@ NoteTree solves this by letting you branch conversations. Start with a root ques
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/notetree.git
-cd notetree
+git clone https://github.com/yourusername/NoteCanopy.git
+cd NoteCanopy
 
 # Install dependencies
 pnpm install

@@ -1,8 +1,8 @@
-# Technical Design Document (TDD): NoteTree
+# Technical Design Document (TDD): NoteCanopy
 
 ## 1. Introduction
 
-- **Overview:** NoteTree is a non-linear, tree-based interface for LLM interactions. This document outlines the technical architecture following Clean Architecture and Hexagonal patterns to ensure maintainability, testability, and decoupling from UI and external APIs.
+- **Overview:** NoteCanopy is a non-linear, tree-based interface for LLM interactions. This document outlines the technical architecture following Clean Architecture and Hexagonal patterns to ensure maintainability, testability, and decoupling from UI and external APIs.
 - **Scope:** Covers core domain logic, state management, LLM integration strategy, and UI component architecture.
 - **References:** [docs/prd.md](docs/prd.md)
 
@@ -10,7 +10,7 @@
 
 ### 2.1. System Architecture
 
-NoteTree follows **Clean Architecture** principles. The system is organized into concentric layers where dependencies only point inward.
+NoteCanopy follows **Clean Architecture** principles. The system is organized into concentric layers where dependencies only point inward.
 
 ```mermaid
 graph TD
@@ -104,7 +104,7 @@ interface NoteNode {
   timestamp: number;
 }
 
-interface NoteTree {
+interface NoteCanopy {
   id: string;
   rootId: string;
   nodes: Record<string, NoteNode>;
@@ -160,7 +160,7 @@ sequenceDiagram
 
 ## 8. Security & Privacy
 
-- **Local-Only Keys**: API keys are stored in `localStorage` and never transmitted to any NoteTree backend.
+- **Local-Only Keys**: API keys are stored in `localStorage` and never transmitted to any NoteCanopy backend.
 - **No Analytics**: User data and conversation trees remain on the client side.
 
 ## 9. Testing Strategy

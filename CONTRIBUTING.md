@@ -1,6 +1,6 @@
-# Contributing to NoteTree
+# Contributing to NoteCanopy
 
-Thanks for considering contributing to NoteTree! This document will help you get started.
+Thanks for considering contributing to NoteCanopy! This document will help you get started.
 
 ## Getting Started
 
@@ -16,8 +16,8 @@ Thanks for considering contributing to NoteTree! This document will help you get
 2. Clone your fork locally:
 
    ```bash
-   git clone https://github.com/yourusername/notetree.git
-   cd notetree
+   git clone https://github.com/yourusername/NoteCanopy.git
+   cd NoteCanopy
    ```
 
 3. Install dependencies:
@@ -157,7 +157,7 @@ src/
 
 ## Database Schema
 
-NoteTree uses Dexie (IndexedDB) for local storage:
+NoteCanopy uses Dexie (IndexedDB) for local storage:
 
 - **projects**: Project metadata
 - **nodes**: Individual conversation nodes
@@ -191,7 +191,7 @@ Currently, the project doesn't have automated tests (contributions welcome!). Fo
 
 ## Code of Conduct
 
-Be respectful, constructive, and helpful. We're all here to make NoteTree better.
+Be respectful, constructive, and helpful. We're all here to make NoteCanopy better.
 
 ## License
 
