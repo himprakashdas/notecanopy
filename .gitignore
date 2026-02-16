@@ -42,6 +42,7 @@ next-env.d.ts
 .planning/
 .agent/
 brain/
+docs/
 logs/
 GEMINI.md
 gemini.md

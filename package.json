@@ -26,6 +26,7 @@
     "date-fns": "^4.1.0",
     "dexie": "^4.3.0",
     "framer-motion": "^11.18.2",
+    "jszip": "^3.10.1",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.564.0",
     "nanoid": "^5.1.6",

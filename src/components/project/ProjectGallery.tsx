@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
-import { Trash2, FolderOpen, Loader2, Edit2, Download } from 'lucide-react';
+import { Trash2, FolderOpen, Loader2, Edit2, Download, PackageOpen } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Project } from '../../types';
 import { APP_NAME } from '../../config';
 import { ProjectExportModal } from '../layout/ProjectExportModal';
+import { ExportAllModal } from '../layout/ExportAllModal';
 import { projectRepository } from '../../db/repository';
 import { exportToJSON, exportToMarkdown, downloadFile } from '../../utils/export';
+import { exportAllProjects } from '../../utils/exportAll';
 
 export function ProjectGallery() {
   const {
@@ -23,6 +25,8 @@ export function ProjectGallery() {
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [editingProjectName, setEditingProjectName] = useState('');
   const [projectToExport, setProjectToExport] = useState<{ id: string; name: string } | null>(null);
+  const [isExportingAll, setIsExportingAll] = useState(false);
+  const [showExportAllModal, setShowExportAllModal] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -106,14 +110,59 @@ export function ProjectGallery() {
     }
   };
 
+  const handleExportAllClick = () => {
+    if (projects.length === 0) {
+      alert('No projects to export');
+      return;
+    }
+    setShowExportAllModal(true);
+  };
+
+  const handleExportAllConfirm = async (format: 'json' | 'markdown' | 'both') => {
+    setShowExportAllModal(false);
+    setIsExportingAll(true);
+    try {
+      await exportAllProjects(projects, format);
+    } catch (error) {
+      console.error('Export all failed:', error);
+      alert('Failed to export projects. Please try again.');
+    } finally {
+      setIsExportingAll(false);
+    }
+  };
+
   return (
     <div className="h-full bg-black text-white p-12 overflow-y-auto custom-scrollbar">
       <div className="max-w-5xl mx-auto">
         <header className="mb-12">
-          <h2 className="text-3xl font-bold text-zinc-100 mb-2">Welcome to {APP_NAME}</h2>
-          <p className="text-zinc-500">
-            Pick a project to continue your learning journey.
-          </p>
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h2 className="text-3xl font-bold text-zinc-100 mb-2">Welcome to {APP_NAME}</h2>
+              <p className="text-zinc-500">
+                Pick a project to continue your learning journey.
+              </p>
+            </div>
+            {projects.length > 0 && (
+              <button
+                onClick={handleExportAllClick}
+                disabled={isExportingAll}
+                className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-rose-600 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg font-medium transition-colors"
+                title="Export all projects as ZIP"
+              >
+                {isExportingAll ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    <span>Exporting...</span>
+                  </>
+                ) : (
+                  <>
+                    <PackageOpen size={18} />
+                    <span>Export All</span>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
         </header>
 
         {isCreating && (
@@ -216,6 +265,13 @@ export function ProjectGallery() {
         projectName={projectToExport?.name || ''}
         onClose={() => setProjectToExport(null)}
         onExportGeneric={handleExportConfirm}
+      />
+
+      <ExportAllModal
+        isOpen={showExportAllModal}
+        projectCount={projects.length}
+        onClose={() => setShowExportAllModal(false)}
+        onExport={handleExportAllConfirm}
       />
     </div>
   );
