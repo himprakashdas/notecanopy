@@ -6,6 +6,8 @@
 
 Think of NoteCanopy as a mind map for conversations with AI. Instead of scrolling through endless chat history, you organize your thoughts in a tree structure where each branch is its own conversation thread.
 
+**[Try it live →](https://notecanopy-isv9.vercel.app/)**
+
 ![NoteCanopy Screenshot](public/screenshot.png)
 
 ## What is this?
