@@ -1,19 +1,24 @@
-import { memo, useRef } from 'react';
+import { memo, useRef, useState } from 'react';
 import { NodeProps, NodeResizer } from '@xyflow/react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Trash2, Info, EyeOff, StickyNote } from 'lucide-react';
-import { NoteCanopyNode } from '../../types';
+import { Trash2, Info, EyeOff, StickyNote, Plus } from 'lucide-react';
+import { NoteCanopyNode, Tag } from '../../types';
 import { useFlowStore } from '../../store/useFlowStore';
 import { useAppStore } from '../../store/useAppStore';
 import { Tooltip } from '../ui/Tooltip';
+import { TagModal } from '../ui/TagModal';
 
 const NoteNode = ({ id, data, selected }: NodeProps<NoteCanopyNode>) => {
   const setDeletingNodeId = useFlowStore((state) => state.setDeletingNodeId);
   const updateNodeContent = useFlowStore((state) => state.updateNodeContent);
   const toggleNoteVisibility = useFlowStore((state) => state.toggleNoteVisibility);
+  const addTag = useFlowStore((state) => state.addTag);
+  const removeTag = useFlowStore((state) => state.removeTag);
   const fontSize = useAppStore((state) => state.fontSize);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const [showTagModal, setShowTagModal] = useState(false);
 
   const isHidden = data.isHidden;
 
@@ -25,6 +30,15 @@ const NoteNode = ({ id, data, selected }: NodeProps<NoteCanopyNode>) => {
   const handleToggleVisibility = (e: React.MouseEvent) => {
     e.stopPropagation();
     toggleNoteVisibility(id);
+  };
+
+  const handleAddTag = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowTagModal(true);
+  };
+
+  const onTagConfirm = (tag: Tag) => {
+    addTag(id, tag);
   };
 
   if (isHidden) {
@@ -67,9 +81,38 @@ const NoteNode = ({ id, data, selected }: NodeProps<NoteCanopyNode>) => {
       >
         {/* Header / Drag Handle */}
         <div className="custom-drag-handle px-3 py-2 border-b border-[var(--color-note-border)]/20 flex items-center justify-between bg-[var(--color-note-border)]/10 rounded-t-lg cursor-grab active:cursor-grabbing">
-          <div className="flex items-center gap-2 text-[var(--color-note-text)] font-bold uppercase tracking-wider text-xs">
-            <StickyNote className="w-3 h-3" />
-            Notes
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2 text-[var(--color-note-text)] font-bold uppercase tracking-wider text-[10px]">
+              <StickyNote className="w-3 h-3" />
+              Notes
+            </div>
+            {/* Tags Display */}
+            <div className="flex flex-wrap gap-1 mt-1">
+              {(data.tags || []).map((tag) => (
+                <span
+                  key={tag.label}
+                  className="px-1.5 py-0.5 rounded text-[8px] font-bold text-white uppercase border border-white/10 flex items-center gap-1 group/tag"
+                  style={{ backgroundColor: tag.color }}
+                >
+                  {tag.label}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeTag(id, tag.label);
+                    }}
+                    className="opacity-0 group-hover/tag:opacity-100 hover:text-white/80 transition-opacity"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              <button
+                onClick={handleAddTag}
+                className="w-4 h-4 rounded-full border border-[var(--color-note-text)]/30 flex items-center justify-center text-[var(--color-note-text)]/50 hover:text-[var(--color-note-text)] hover:bg-[var(--color-note-border)]/20 transition-all"
+              >
+                <Plus className="w-2.5 h-2.5" />
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center gap-1">
@@ -107,6 +150,12 @@ const NoteNode = ({ id, data, selected }: NodeProps<NoteCanopyNode>) => {
           />
         </div>
       </div>
+
+      <TagModal
+        isOpen={showTagModal}
+        onClose={() => setShowTagModal(false)}
+        onConfirm={onTagConfirm}
+      />
     </>
   );
 };

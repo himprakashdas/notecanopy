@@ -85,17 +85,18 @@ export const CanvasMenu: React.FC = () => {
       const { nodes: currentNodes, edges: currentEdges } = await projectRepository.getProjectData(
         activeProject.id
       );
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
       let content = '';
       let filename = '';
       let type = '';
 
       if (format === 'json') {
         content = exportToJSON(activeProject, currentNodes, currentEdges);
-        filename = `${activeProject.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_export.json`;
+        filename = `${activeProject.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${timestamp}.json`;
         type = 'application/json';
       } else {
         content = exportToMarkdown(activeProject, currentNodes, currentEdges);
-        filename = `${activeProject.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_export.md`;
+        filename = `${activeProject.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${timestamp}.md`;
         type = 'text/markdown';
       }
 

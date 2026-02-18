@@ -53,6 +53,9 @@ interface FlowState {
   createNote: (position: { x: number; y: number }) => void;
   toggleNoteVisibility: (nodeId: string) => void;
   toggleAllNotesVisibility: () => void;
+  // Tag actions
+  addTag: (nodeId: string, tag: { label: string; color: string }) => void;
+  removeTag: (nodeId: string, tagLabel: string) => void;
 }
 
 export const useFlowStore = create<FlowState>()(
@@ -185,7 +188,7 @@ export const useFlowStore = create<FlowState>()(
             thinking: true,
             createdAt: Date.now(),
           },
-          style: { width: 450, height: 562 },
+          style: { width: 450, height: 'auto' },
         };
 
         const newEdge: NoteCanopyEdge = {
@@ -593,6 +596,38 @@ export const useFlowStore = create<FlowState>()(
               : node
           ),
         });
+      },
+      addTag: (nodeId, tag) => {
+        set({
+          nodes: get().nodes.map((node) =>
+            node.id === nodeId
+              ? {
+                  ...node,
+                  data: {
+                    ...node.data,
+                    tags: [...(node.data.tags || []), tag],
+                  },
+                }
+              : node
+          ),
+        });
+        get().forceSave();
+      },
+      removeTag: (nodeId, tagLabel) => {
+        set({
+          nodes: get().nodes.map((node) =>
+            node.id === nodeId
+              ? {
+                  ...node,
+                  data: {
+                    ...node.data,
+                    tags: (node.data.tags || []).filter((t) => t.label !== tagLabel),
+                  },
+                }
+              : node
+          ),
+        });
+        get().forceSave();
       },
     }),
     {

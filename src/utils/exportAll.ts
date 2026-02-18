@@ -57,7 +57,7 @@ export const exportAllProjects = async (
   a.href = url;
   
   // Use current date and format for filename
-  const timestamp = new Date().toISOString().split('T')[0];
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   const formatSuffix = format === 'both' ? 'all' : format;
   a.download = `notecanopy_projects_${formatSuffix}_${timestamp}.zip`;
   

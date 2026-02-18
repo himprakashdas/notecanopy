@@ -9,6 +9,11 @@ export interface Project {
   model: string;
 }
 
+export interface Tag {
+  label: string;
+  color: string;
+}
+
 export interface NodeData extends Record<string, unknown> {
   label: string; // The text content shown in the node
   content: string; // The fuller content (sometimes used for hidden prompts)
@@ -17,6 +22,7 @@ export interface NodeData extends Record<string, unknown> {
   createdAt: number;
   isHidden?: boolean;
   color?: string;
+  tags?: Tag[];
 }
 
 export type NoteCanopyNode = Node<NodeData>;

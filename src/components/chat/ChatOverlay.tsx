@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
 import { Tooltip } from '../ui/Tooltip';
+import { CodeBlock } from '../ui/CodeBlock';
 
 const ChatOverlay = () => {
   const { editingNodeId, setEditingNodeId, nodes, updateNodeContent, addAIChild } = useFlowStore();
@@ -211,7 +212,23 @@ const ChatOverlay = () => {
             <div
               className={`markdown-content text-zinc-100 ${fontClasses[fontSize]} leading-relaxed`}
             >
-              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeSanitize]}
+                components={{
+                  code(props) {
+                    const { children, className, node, ...rest } = props;
+                    const match = /language-(\w+)/.exec(className || '');
+                    return match ? (
+                      <CodeBlock language={match[1]} value={String(children).replace(/\n$/, '')} />
+                    ) : (
+                      <code {...rest} className={className}>
+                        {children}
+                      </code>
+                    );
+                  },
+                }}
+              >
                 {editingNode.data.label}
               </ReactMarkdown>
             </div>
