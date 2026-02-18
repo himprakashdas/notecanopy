@@ -111,12 +111,12 @@ export function Sidebar() {
 
   return (
     <div className={clsx(
-      "h-screen bg-zinc-950 border-r border-zinc-900 flex flex-col z-50 overflow-hidden select-none transition-all duration-300",
+      "h-screen bg-surface border-r border-border flex flex-col z-50 overflow-hidden select-none transition-all duration-300",
       isCollapsed ? "w-20" : "w-72"
     )}>
       {/* Header */}
       <div className={clsx(
-        "border-b border-zinc-900 relative",
+        "border-b border-border relative",
         isCollapsed ? "p-3" : "p-6"
       )}>
         {/* Toggle Button - only show when expanded */}
@@ -220,7 +220,7 @@ export function Sidebar() {
               placeholder="Search projects..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-900/50 border border-zinc-900 focus:border-zinc-800 focus:outline-none rounded-lg pl-9 py-2 text-xs text-zinc-300 placeholder:text-zinc-600 transition-colors"
+              className="w-full bg-black/20 border border-border focus:border-border-accent focus:outline-none rounded-lg pl-9 py-2 text-xs text-text-main placeholder:text-zinc-600 transition-colors"
             />
           </div>
         </div>

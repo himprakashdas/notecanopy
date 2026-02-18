@@ -10,18 +10,52 @@ import { Sidebar } from './components/layout/Sidebar';
 import { DeviceRestriction } from './components/layout/DeviceRestriction';
 
 function App() {
-  const { activeProject, theme } = useAppStore();
+  const { activeProject, theme, customThemes } = useAppStore();
 
   // Set document title dynamically
   React.useEffect(() => {
     document.title = `${APP_NAME} | ${APP_TAGLINE}`;
   }, []);
 
+  // Sync custom theme colors to document root
+  React.useEffect(() => {
+    if (theme.startsWith('custom-')) {
+      const customTheme = customThemes.find((t) => t.id === theme);
+      if (customTheme) {
+        Object.entries(customTheme.colors).forEach(([key, value]) => {
+          document.documentElement.style.setProperty(key, value);
+        });
+        return;
+      }
+    }
+
+    // Clear all custom properties when switching away
+    // This ensures we revert to the default or predefined theme values
+    const variables = [
+      '--color-brand-primary',
+      '--color-brand-secondary',
+      '--color-surface-base',
+      '--color-surface-raised',
+      '--color-surface-overlay',
+      '--color-text-main',
+      '--color-text-muted',
+      '--color-text-dim',
+      '--color-border-main',
+      '--color-border-accent',
+      '--color-note-bg',
+      '--color-note-border',
+      '--color-note-text',
+    ];
+    variables.forEach((variable) => {
+      document.documentElement.style.removeProperty(variable);
+    });
+  }, [theme, customThemes]);
+
   return (
     <DeviceRestriction>
       <div
         className={clsx(
-          'flex w-full h-screen bg-black overflow-hidden',
+          'flex w-full h-screen bg-background overflow-hidden',
           theme !== 'default' && theme
         )}
       >

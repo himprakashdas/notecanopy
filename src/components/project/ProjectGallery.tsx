@@ -132,7 +132,7 @@ export function ProjectGallery() {
   };
 
   return (
-    <div className="h-full bg-black text-white p-12 overflow-y-auto custom-scrollbar">
+    <div className="h-full bg-background text-text-main p-12 overflow-y-auto custom-scrollbar">
       <div className="max-w-5xl mx-auto">
         <header className="mb-12">
           <div className="flex justify-between items-start mb-4">

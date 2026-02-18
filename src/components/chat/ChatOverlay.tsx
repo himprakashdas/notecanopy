@@ -103,22 +103,22 @@ const ChatOverlay = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 lg:p-24 bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 lg:p-24 bg-background/60 backdrop-blur-sm"
       onClick={() => setEditingNodeId(null)}
     >
       <div
-        className="relative w-full max-w-4xl h-full max-h-[800px] bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl flex flex-col overflow-hidden"
+        className="relative w-full max-w-4xl h-full max-h-[800px] bg-surface border border-border rounded-xl shadow-2xl flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleContainerKeyDown}
         tabIndex={-1} // Allow the container to catch key events if focused
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-900/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface/50">
           <div className="flex items-center gap-2">
             <span
-              className={`w-2 h-2 rounded-full ${editingNode.data.type === 'user' ? 'bg-zinc-400' : 'bg-primary'}`}
+              className={`w-2 h-2 rounded-full ${editingNode.data.type === 'user' ? 'bg-text-muted' : 'bg-primary'}`}
             />
-            <h2 className="text-zinc-400 text-sm font-medium uppercase tracking-wider">
+            <h2 className="text-text-muted text-sm font-medium uppercase tracking-wider">
               {isUser ? 'Editing User Prompt' : 'Viewing AI Response'}
             </h2>
           </div>
@@ -132,7 +132,7 @@ const ChatOverlay = () => {
                 >
                   <button
                     onClick={() => setShowMarkdown(!showMarkdown)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg transition-colors text-xs font-medium"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-overlay hover:bg-surface text-text-muted rounded-lg transition-colors text-xs font-medium"
                   >
                     {showMarkdown ? (
                       <Code className="w-3.5 h-3.5" />
@@ -148,7 +148,7 @@ const ChatOverlay = () => {
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-medium ${
                       copied
                         ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50'
-                        : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'
+                        : 'bg-overlay hover:bg-surface text-text-muted'
                     }`}
                   >
                     {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
@@ -157,7 +157,7 @@ const ChatOverlay = () => {
                 </Tooltip>
               </>
             )}
-            <div className="flex items-center bg-black border border-zinc-800 rounded-lg p-0.5">
+            <div className="flex items-center bg-black/20 border border-border rounded-lg p-0.5">
               {(['small', 'medium', 'large'] as const).map((size) => (
                 <Tooltip
                   key={size}
@@ -170,8 +170,8 @@ const ChatOverlay = () => {
                       px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all
                       ${
                         fontSize === size
-                          ? 'bg-zinc-800 text-zinc-100'
-                          : 'text-zinc-500 hover:text-zinc-300'
+                          ? 'bg-surface text-text-main'
+                          : 'text-text-dim hover:text-text-muted'
                       }
                     `}
                   >
@@ -183,7 +183,7 @@ const ChatOverlay = () => {
             <Tooltip content="Close Editor" position="bottom">
               <button
                 onClick={() => setEditingNodeId(null)}
-                className="p-2 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 rounded-lg transition-colors"
+                className="p-2 text-text-dim hover:text-text-main hover:bg-surface rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -206,11 +206,11 @@ const ChatOverlay = () => {
                 }
               }}
               placeholder="Type your content here..."
-              className={`w-full h-full bg-transparent text-zinc-100 ${fontClasses[fontSize]} leading-relaxed resize-none focus:outline-none placeholder:text-zinc-700`}
+              className={`w-full h-full bg-transparent text-text-main ${fontClasses[fontSize]} leading-relaxed resize-none focus:outline-none placeholder:text-text-dim`}
             />
           ) : showMarkdown ? (
             <div
-              className={`markdown-content text-zinc-100 ${fontClasses[fontSize]} leading-relaxed`}
+              className={`markdown-content text-text-main ${fontClasses[fontSize]} leading-relaxed`}
             >
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
@@ -234,7 +234,7 @@ const ChatOverlay = () => {
             </div>
           ) : (
             <pre
-              className={`text-zinc-300 ${fontClasses[fontSize]} leading-relaxed font-mono whitespace-pre-wrap`}
+              className={`text-text-muted ${fontClasses[fontSize]} leading-relaxed font-mono whitespace-pre-wrap`}
             >
               {editingNode.data.label}
             </pre>
@@ -242,7 +242,7 @@ const ChatOverlay = () => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-zinc-800 bg-zinc-900/50 text-zinc-500 text-xs flex justify-between items-center">
+        <div className="px-6 py-3 border-t border-border bg-surface/50 text-text-dim text-xs flex justify-between items-center">
           <div className="flex items-center gap-4">
             {isUser && showKeyboardTip && (
               <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-lg text-primary text-xs font-medium animate-pulse">
@@ -264,7 +264,7 @@ const ChatOverlay = () => {
                   ${
                     hasContent
                       ? 'bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20'
-                      : 'bg-zinc-800 text-zinc-600 cursor-not-allowed'
+                      : 'bg-surface text-text-dim cursor-not-allowed'
                   }
                 `}
               >
@@ -275,7 +275,7 @@ const ChatOverlay = () => {
             {!isUser && (
               <button
                 onClick={() => setEditingNodeId(null)}
-                className="px-6 py-3 bg-zinc-800 text-zinc-200 hover:bg-zinc-700 rounded-xl font-bold transition-all active:scale-[0.98]"
+                className="px-6 py-3 bg-overlay text-text-main hover:bg-surface rounded-xl font-bold transition-all active:scale-[0.98]"
               >
                 Done
               </button>

@@ -370,6 +370,7 @@ const FlowCanvasInternal = () => {
         panOnDrag={!isEditing && !isDeleting}
         zoomOnScroll={!isEditing && !isDeleting}
         colorMode="dark"
+        style={{ backgroundColor: 'transparent' }}
         minZoom={0.05}
         maxZoom={4}
         paneClickDistance={5}

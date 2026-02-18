@@ -29,6 +29,11 @@
   --color-overlay: var(--color-surface-overlay);
 
   --color-border: var(--color-border-main);
+  --color-border-accent: var(--color-border-accent);
+
+  --color-text-main: var(--color-text-main);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-dim: var(--color-text-dim);
 
   --animate-spin-slow: spin 3s linear infinite;
 }

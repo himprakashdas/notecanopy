@@ -8,6 +8,7 @@ interface AppState {
   isLoading: boolean;
   fontSize: 'small' | 'medium' | 'large';
   theme: string;
+  customThemes: Array<{ id: string; name: string; colors: Record<string, string> }>;
   geminiApiKey: string | null;
 
   // Actions
@@ -19,6 +20,9 @@ interface AppState {
   renameProject: (id: string, newName: string) => Promise<void>;
   setFontSize: (size: 'small' | 'medium' | 'large') => void;
   setTheme: (theme: string) => void;
+  addCustomTheme: (name: string, colors: Record<string, string>) => string;
+  updateCustomTheme: (id: string, name: string, colors: Record<string, string>) => void;
+  deleteCustomTheme: (id: string) => void;
   setGeminiApiKey: (key: string | null) => void;
 }
 
@@ -81,10 +85,41 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ fontSize: size });
   },
 
-  theme: localStorage.getItem('NoteCanopy-theme') || 'default',
+  theme: (() => {
+    const stored = localStorage.getItem('NoteCanopy-theme');
+    const removedThemes = ['theme-navy', 'theme-bruvbox', 'theme-winter'];
+    if (stored && removedThemes.includes(stored)) {
+      localStorage.setItem('NoteCanopy-theme', 'default');
+      return 'default';
+    }
+    return stored || 'default';
+  })(),
   setTheme: (theme) => {
     localStorage.setItem('NoteCanopy-theme', theme);
     set({ theme });
+  },
+
+  customThemes: JSON.parse(localStorage.getItem('NoteCanopy-custom-themes') || '[]'),
+  addCustomTheme: (name, colors) => {
+    const id = `custom-${Date.now()}`;
+    const newTheme = { id, name, colors };
+    const updatedThemes = [...get().customThemes, newTheme];
+    localStorage.setItem('NoteCanopy-custom-themes', JSON.stringify(updatedThemes));
+    set({ customThemes: updatedThemes });
+    return id;
+  },
+  updateCustomTheme: (id, name, colors) => {
+    const updatedThemes = get().customThemes.map((t) => (t.id === id ? { ...t, name, colors } : t));
+    localStorage.setItem('NoteCanopy-custom-themes', JSON.stringify(updatedThemes));
+    set({ customThemes: updatedThemes });
+  },
+  deleteCustomTheme: (id) => {
+    const updatedThemes = get().customThemes.filter((t) => t.id !== id);
+    localStorage.setItem('NoteCanopy-custom-themes', JSON.stringify(updatedThemes));
+    set({ customThemes: updatedThemes });
+    if (get().theme === id) {
+      get().setTheme('default');
+    }
   },
 
   geminiApiKey: localStorage.getItem('NoteCanopy-gemini-api-key'),

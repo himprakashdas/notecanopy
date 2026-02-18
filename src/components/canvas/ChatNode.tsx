@@ -124,11 +124,11 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
       className={twMerge(
         clsx(
           'group px-4 py-3 rounded-lg border-2 w-full transition-shadow relative flex flex-col',
-          'bg-surface text-zinc-100 shadow-xl',
+          'bg-surface text-text-main shadow-xl',
           heightClasses,
-          isUser ? 'border-zinc-700' : 'border-primary/50',
-          selected && (isUser ? 'border-zinc-400' : 'border-primary'),
-          !isUser && 'bg-primary/10',
+          isUser ? 'border-border' : 'border-primary/50',
+          selected && (isUser ? 'border-border-accent' : 'border-primary'),
+          !isUser && 'bg-primary/5',
           data.thinking && 'opacity-80',
           localEditMode && 'ring-2 ring-primary/50 border-primary'
         )
@@ -170,12 +170,12 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
       <Handle
         type="target"
         position={Position.Top}
-        className="w-2 h-2 !bg-zinc-600 border-none"
+        className="w-2 h-2 !bg-border border-none"
       />
 
       <div className="flex items-center justify-between mb-1 shrink-0">
         <div className="flex flex-col">
-          <div className="text-[10px] uppercase tracking-wider font-bold text-zinc-500">
+          <div className="text-[10px] uppercase tracking-wider font-bold text-text-muted">
             {isUser ? 'User' : 'Assistant'}
           </div>
           {/* Tags Display */}
@@ -201,7 +201,7 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
             {!localEditMode && (
               <button
                 onClick={handleAddTag}
-                className="w-4 h-4 rounded-full border border-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-all"
+                className="w-4 h-4 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text-main hover:bg-surface transition-all"
               >
                 <Plus className="w-2.5 h-2.5" />
               </button>
@@ -216,7 +216,7 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
                 className={`p-1 rounded transition-all ${
                   copied
                     ? 'text-emerald-400 bg-emerald-500/20'
-                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800'
+                    : 'text-text-muted hover:text-text-main hover:bg-surface'
                 }`}
               >
                 {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -229,7 +229,7 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
                 e.stopPropagation();
                 setEditingNodeId(id);
               }}
-              className="p-1 rounded text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-all"
+              className="p-1 rounded text-text-muted hover:text-text-main hover:bg-surface transition-all"
             >
               <Maximize className="w-3 h-3" />
             </button>
@@ -245,7 +245,7 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
       >
         {data.thinking ? (
           <div className="flex flex-col gap-2">
-            <span className="italic text-zinc-500 animate-pulse">Thinking...</span>
+            <span className="italic text-text-muted animate-pulse">Thinking...</span>
             {data.label && (
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
@@ -273,7 +273,7 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
             ref={textareaRef}
             autoFocus
             className={twMerge(
-              'w-full h-full bg-transparent border-none outline-none resize-none text-zinc-100 placeholder-zinc-700 custom-scrollbar nodrag nopan Nowheel',
+              'w-full h-full bg-transparent border-none outline-none resize-none text-text-main placeholder-text-dim custom-scrollbar nodrag nopan Nowheel',
               fontSize === 'small' ? 'text-xs' : fontSize === 'large' ? 'text-base' : 'text-sm'
             )}
             value={data.label}
@@ -336,7 +336,7 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
       <div
         className={clsx(
           'absolute -bottom-5 left-1/2 -translate-x-1/2',
-          'flex items-center gap-1 p-1 rounded-full bg-zinc-800 border border-zinc-700',
+          'flex items-center gap-1 p-1 rounded-full bg-overlay border border-border',
           'opacity-0 group-hover:opacity-100 transition-opacity z-10',
           'shadow-lg'
         )}
@@ -345,7 +345,7 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
           <Tooltip content="Stop Generation" position="bottom">
             <button
               onClick={handleStop}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-primary hover:text-primary/80 hover:bg-zinc-700 transition-colors"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-primary hover:text-primary/80 hover:bg-surface transition-colors"
             >
               <Square className="w-3 h-3 fill-current" />
             </button>
@@ -354,18 +354,18 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
           <>
             <Tooltip content="Delete node" position="bottom">
               <button
-                onClick={handleDelete}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-400 hover:text-red-400 hover:bg-zinc-700 transition-colors"
-              >
+                  onClick={handleDelete}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-red-400 hover:bg-surface transition-colors"
+                >
                 <Trash2 className="w-4 h-4" />
               </button>
             </Tooltip>
 
             <Tooltip content="Add User child" position="bottom">
               <button
-                onClick={handleAddBranch}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors"
-              >
+                  onClick={handleAddBranch}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-main hover:bg-surface transition-colors"
+                >
                 <Plus className="w-4 h-4" />
               </button>
             </Tooltip>
@@ -374,10 +374,10 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  useFlowStore.getState().addNoteChild(id);
-                }}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-400 hover:text-secondary hover:bg-zinc-700 transition-colors"
-              >
+                    useFlowStore.getState().addNoteChild(id);
+                  }}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-secondary hover:bg-surface transition-colors"
+                >
                 <StickyNote className="w-4 h-4" />
               </button>
             </Tooltip>
@@ -386,7 +386,7 @@ const ChatNode = ({ id, data, selected, width, height }: NodeProps<NoteCanopyNod
               <Tooltip content="Add AI child" position="bottom">
                 <button
                   onClick={handleAddAIChild}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-400 hover:text-primary hover:bg-zinc-700 transition-colors"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-primary hover:bg-surface transition-colors"
                 >
                   <Send className="w-4 h-4" />
                 </button>

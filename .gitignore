@@ -1,3 +1,5 @@
+.DS_Store
+
 # dependencies
 /node_modules
 /.pnp
@@ -38,9 +40,10 @@ next-env.d.ts
 .sublime-workspace
 
 # Gemini / Planning
+.agents/
 .gemini/
 .planning/
-.agent/
+# .agent/
 brain/
 docs/
 logs/
